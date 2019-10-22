@@ -1,0 +1,9 @@
+vendor/*
+var/*
+prestashop/*
+modules/*
+override/*
+themes/*
+db-data/*
+./git/*
+git

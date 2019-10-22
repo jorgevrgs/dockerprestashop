@@ -1,0 +1,53 @@
+version: "3"
+services:
+  mysql:
+    container_name: ps-1761-mysql
+    image: mysql/mysql-server:5.7
+    restart: always
+    environment:
+      - MYSQL_RANDOM_ROOT_PASSWORD=1
+      - MYSQL_USER=${DB_USER}
+      - MYSQL_PASSWORD=${DB_PASSWD}
+      - MYSQL_DATABASE=${DB_NAME}
+    volumes:
+      - db-data:/var/lib/mysql
+
+  prestashop_1.7.6.1-7.2-apache:
+    container_name: ps-1761-web
+    image: prestashop/prestashop:1.7-7.2-apache
+    build: .
+    depends_on:
+      - mysql
+    ports:
+      - ${PS_PORT}:80
+    environment:
+      - DB_SERVER=mysql
+      - DB_PREFIX=${DB_PREFIX}
+      - PS_DEV_MODE=${PS_DEV_MODE}
+      - PS_INSTALL_AUTO=1
+      - DB_USER=${DB_USER}
+      - DB_PASSWD=${DB_PASSWD}
+      - DB_NAME=${DB_NAME}
+      - PS_FOLDER_ADMIN=${PS_FOLDER_ADMIN}
+      - PS_DOMAIN=${PS_DOMAIN}:${PS_PORT}
+      - PS_LANGUAGE=${PS_LANGUAGE}
+      - PS_COUNTRY=${PS_COUNTRY}
+      - PS_FOLDER_INSTALL=installed
+      - ADMIN_MAIL=${ADMIN_MAIL}
+      - ADMIN_PASSWD=${ADMIN_PASSWD}
+    volumes:
+      - ./prestashop:/var/www/html/:delegated
+      - ./vendor:/var/www/html/vendor
+      - ./themes:/var/www/html/themes
+      - ./var:/var/www/html/var
+      - ./modules:/var/www/html/modules
+      - ./override:/var/www/html/override
+
+volumes:
+  db-data:
+  prestashop:
+  vendor:
+  themes:
+  var:
+  modules:
+  override:
